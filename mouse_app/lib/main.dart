@@ -47,9 +47,9 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
   // Connect to the server using the saved IP address
   void connectToServer() {
     // Disconnect any previous connection.
-    if (socket != null) {
-      socket.disconnect();
-    }
+    // if (socket == null) {
+    //   socket.disconnect();
+    // }
 
     socket = IO.io(
       'http://$ipAddress:5000', // Use the saved IP address
@@ -171,15 +171,8 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
             child: Container(
               color: Colors.white,
               child: Center(
-                child: Text(
-                  _connectionStatusMessage,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54,
+                  //
                   ),
-                ),
-              ),
             ),
           ),
           // Optionally, you can add a connection status banner at the top.
