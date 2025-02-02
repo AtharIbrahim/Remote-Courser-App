@@ -66,31 +66,18 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
       setState(() {
         _connectionStatusMessage = "Connected to server at $ipAddress";
       });
-      print("Connected to server at $ipAddress");
-      // Optionally, you can also show a SnackBar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Connected to server")),
-      );
     });
 
     socket.onDisconnect((_) {
       setState(() {
         _connectionStatusMessage = "Disconnected from server";
       });
-      print("Disconnected from server");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Disconnected from server")),
-      );
     });
 
     socket.onConnectError((error) {
       setState(() {
         _connectionStatusMessage = "Connection error: $error";
       });
-      print("Connection error: $error");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Connection error: $error")),
-      );
     });
   }
 
@@ -125,7 +112,7 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        backgroundColor: const Color(0xFF2E0059),
+        backgroundColor: Colors.orange,
         actions: [
           IconButton(
             icon: const Icon(

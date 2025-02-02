@@ -238,6 +238,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor:
+            const Color.from(alpha: 1, red: 0.051, green: 0.051, blue: 0.169),
         title: Text(widget.title),
         actions: [
           IconButton(
@@ -353,7 +355,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: Colors.black.withOpacity(0.4),
+      color: Colors.black.withOpacity(0.2),
       child: SizedBox(
         width: screenWidth * 0.4,
         height: 90,

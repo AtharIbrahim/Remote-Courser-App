@@ -70,17 +70,9 @@ class _SettingsState extends State<Settings> {
           });
           _saveSettings();
           _sendToServer();
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Invalid QR code: $scannedData')),
-          );
-        }
+        } catch (e) {}
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Camera permission required')),
-      );
-    }
+    } else {}
   }
 
   @override
@@ -92,7 +84,7 @@ class _SettingsState extends State<Settings> {
           'Settings',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF2E0059),
+        backgroundColor: Colors.orange,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
@@ -103,8 +95,8 @@ class _SettingsState extends State<Settings> {
             Text('Speed: ${_speed.toStringAsFixed(2)}',
                 style: const TextStyle(fontSize: 16)),
             Slider(
-              thumbColor: const Color(0xFF2E0059),
-              activeColor: const Color(0xFF2E0059),
+              thumbColor: Colors.orange,
+              activeColor: Colors.orange,
               value: _speed,
               min: 0.1,
               max: 3.0,
@@ -180,7 +172,12 @@ class _QRScanScreenState extends State<QRScanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Scan QR Code'),
+        backgroundColor: Colors.orange,
+        title: const Text(
+          'Scan QR Code',
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: MobileScanner(
         controller: cameraController,
