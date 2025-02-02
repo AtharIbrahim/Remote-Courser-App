@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart'; // For QR code generation
 import 'dart:io';
 import 'dart:convert';
 
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Desktop Courser Controller',
+      title: 'Desktop Mouse Controller',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
           bodyMedium: TextStyle(fontSize: 16.0),
         ),
       ),
-      home: const MyHomePage(title: 'Desktop Courser Controller'),
+      home: const MyHomePage(title: 'Desktop Mouse Controller'),
     );
   }
 }
@@ -45,6 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String _phoneConnection = "Not connected";
   final String _connectionPort = "5000"; // as per your Python server
   final List<String> _logs = [];
+  String _ipAddress = "Fetching IP..."; // IP address of the system
+  bool _showQrCode = false; // Toggle for showing/hiding QR code
 
   Process? _pythonProcess;
 
@@ -52,6 +55,28 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _initPython();
+    _fetchIpAddress(); // Fetch IP address when the app starts
+  }
+
+  /// Fetches the IP address of the system using a Python script.
+  Future<void> _fetchIpAddress() async {
+    try {
+      final result =
+          await Process.run('python', ['get_ip.py'], runInShell: true);
+      if (result.exitCode == 0) {
+        setState(() {
+          _ipAddress = result.stdout.toString().trim();
+        });
+      } else {
+        setState(() {
+          _ipAddress = "Failed to fetch IP";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _ipAddress = "Error: $e";
+      });
+    }
   }
 
   /// Initializes the Python environment and starts the Python server.
@@ -209,10 +234,23 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    // final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      // Gradient background.
+      appBar: AppBar(
+        title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon:
+                Icon(_showQrCode ? Icons.qr_code_2 : Icons.qr_code_2_outlined),
+            onPressed: () {
+              setState(() {
+                _showQrCode = !_showQrCode; // Toggle QR code visibility
+              });
+            },
+          ),
+        ],
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -227,13 +265,33 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  widget.title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
-                        letterSpacing: 1.2,
+                if (_showQrCode) // Show QR code if toggled
+                  Column(
+                    children: [
+                      QrImageView(
+                        data: "http://$_ipAddress:$_connectionPort",
+                        version: QrVersions.auto,
+                        size: 200.0,
+                        backgroundColor: Colors.white,
                       ),
-                ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Scan to connect",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                // Text(
+                //   widget.title,
+                //   style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                //         color: Colors.white,
+                //         letterSpacing: 1.2,
+                //       ),
+                // ),
                 const SizedBox(height: 20),
                 // Status cards.
                 Wrap(

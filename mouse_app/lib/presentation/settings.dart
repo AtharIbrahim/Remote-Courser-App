@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:permission_handler/permission_handler.dart'; // Add this
 
 class Settings extends StatefulWidget {
   final Function(double) onSpeedChanged;
-  final Function(String) onIpChanged; // Callback for IP address change
+  final Function(String) onIpChanged;
 
   const Settings({
     super.key,
@@ -17,35 +19,68 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   double _speed = 1.0;
-  String _ipAddress = ''; // Store the IP address
+  String _ipAddress = '';
+  late TextEditingController _ipController; // Add controller
 
   @override
   void initState() {
     super.initState();
-    _loadSettings(); // Load saved settings (speed and IP address)
+    _ipController = TextEditingController();
+    _loadSettings();
   }
 
-  // Load the saved speed and IP address from SharedPreferences
   _loadSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _speed = prefs.getDouble('mouse_speed') ?? 1.0;
-      _ipAddress = prefs.getString('pc_ip') ?? ''; // Load saved IP address
+      _ipAddress = prefs.getString('pc_ip') ?? '';
+      _ipController.text = _ipAddress; // Initialize controller text
     });
   }
 
-  // Save the new speed and IP address to SharedPreferences
   _saveSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setDouble('mouse_speed', _speed);
     prefs.setString('pc_ip', _ipAddress);
   }
 
-  // Send the speed and IP address to the server and update the callback
   void _sendToServer() {
     widget.onSpeedChanged(_speed);
-    widget.onIpChanged(_ipAddress); // Send IP address change
-    // print("Sending speed and IP to server: Speed: $_speed, IP: $_ipAddress");
+    widget.onIpChanged(_ipAddress);
+  }
+
+  // Add QR scanning function
+  Future<void> _scanQRCode() async {
+    // Check camera permission
+    if (await Permission.camera.request().isGranted) {
+      final scannedData = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => QRScanScreen(),
+        ),
+      );
+
+      if (scannedData != null) {
+        // Parse the scanned data to extract IP address
+        try {
+          final uri = Uri.parse(scannedData);
+          setState(() {
+            _ipAddress = uri.host;
+            _ipController.text = uri.host;
+          });
+          _saveSettings();
+          _sendToServer();
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Invalid QR code: $scannedData')),
+          );
+        }
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Camera permission required')),
+      );
+    }
   }
 
   @override
@@ -53,16 +88,12 @@ class _SettingsState extends State<Settings> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Settings',
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xFF2E0059),
-        iconTheme: IconThemeData(
-          color: Colors.white, // Change the back arrow color here
-        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -70,7 +101,7 @@ class _SettingsState extends State<Settings> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('Speed: ${_speed.toStringAsFixed(2)}',
-                style: TextStyle(fontSize: 16)),
+                style: const TextStyle(fontSize: 16)),
             Slider(
               thumbColor: const Color(0xFF2E0059),
               activeColor: const Color(0xFF2E0059),
@@ -85,32 +116,82 @@ class _SettingsState extends State<Settings> {
                 _sendToServer();
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'PC IP Address',
-                  hintText: 'Enter your PC\'s IP address',
-                  border: InputBorder.none,
-                ),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                onChanged: (newIp) {
-                  setState(() {
-                    _ipAddress = newIp;
-                  });
-                  _saveSettings();
-                  _sendToServer();
-                },
-                controller: TextEditingController(text: _ipAddress),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        labelText: 'PC IP Address',
+                        hintText: 'Enter your PC\'s IP address',
+                        border: InputBorder.none,
+                      ),
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
+                      onChanged: (newIp) {
+                        setState(() {
+                          _ipAddress = newIp;
+                        });
+                        _saveSettings();
+                        _sendToServer();
+                      },
+                      controller: _ipController,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.qr_code_scanner),
+                    onPressed: _scanQRCode,
+                    color: const Color(0xFF2E0059),
+                  ),
+                ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// Add QR scanning screen
+class QRScanScreen extends StatefulWidget {
+  @override
+  State<QRScanScreen> createState() => _QRScanScreenState();
+}
+
+class _QRScanScreenState extends State<QRScanScreen> {
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  MobileScannerController cameraController = MobileScannerController();
+
+  @override
+  void dispose() {
+    cameraController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Scan QR Code'),
+      ),
+      body: MobileScanner(
+        controller: cameraController,
+        onDetect: (capture) {
+          final List<Barcode> barcodes = capture.barcodes;
+          for (final barcode in barcodes) {
+            if (barcode.rawValue != null) {
+              Navigator.pop(context, barcode.rawValue);
+            }
+          }
+        },
       ),
     );
   }
