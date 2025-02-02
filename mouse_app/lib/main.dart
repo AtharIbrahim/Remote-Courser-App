@@ -76,7 +76,7 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
 
     socket.onConnectError((error) {
       setState(() {
-        _connectionStatusMessage = "Connection error: $error";
+        _connectionStatusMessage = "Connection error";
       });
     });
   }
