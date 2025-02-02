@@ -112,7 +112,7 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFF2E0059),
         actions: [
           IconButton(
             icon: const Icon(

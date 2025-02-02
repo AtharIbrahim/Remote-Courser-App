@@ -84,7 +84,7 @@ class _SettingsState extends State<Settings> {
           'Settings',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFF2E0059),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
@@ -95,8 +95,8 @@ class _SettingsState extends State<Settings> {
             Text('Speed: ${_speed.toStringAsFixed(2)}',
                 style: const TextStyle(fontSize: 16)),
             Slider(
-              thumbColor: Colors.orange,
-              activeColor: Colors.orange,
+              thumbColor: const Color(0xFF2E0059),
+              activeColor: const Color(0xFF2E0059),
               value: _speed,
               min: 0.1,
               max: 3.0,
@@ -172,7 +172,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFF2E0059),
         title: const Text(
           'Scan QR Code',
           style: TextStyle(color: Colors.white),
