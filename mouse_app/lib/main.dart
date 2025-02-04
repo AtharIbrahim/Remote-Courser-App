@@ -13,4 +13,5 @@ class MouseApp extends StatelessWidget {
       home: SplashScreen(),
     );
   }
+  //
 }

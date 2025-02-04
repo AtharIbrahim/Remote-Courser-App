@@ -27,16 +27,11 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
       speedMultiplier = prefs.getDouble('mouse_speed') ?? 1.0;
       ipAddress = prefs.getString('pc_ip') ?? '192.168.100.13'; // Default IP
     });
-    connectToServer(); // Connect to the server using the saved IP address
+    connectToServer();
   }
 
   // Connect to the server using the saved IP address
   void connectToServer() {
-    // Disconnect any previous connection.
-    // if (socket == null) {
-    //   socket.disconnect();
-    // }
-
     socket = IO.io(
       'http://$ipAddress:5000', // Use the saved IP address
       IO.OptionBuilder()
@@ -98,9 +93,8 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        backgroundColor: Colors
-            .transparent, // Make the background transparent to show the gradient
-        elevation: 0, // Remove the shadow
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
