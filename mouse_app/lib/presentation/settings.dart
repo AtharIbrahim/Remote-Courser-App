@@ -84,7 +84,21 @@ class _SettingsState extends State<Settings> {
           'Settings',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF2E0059),
+        backgroundColor: Colors
+            .transparent, // Make the background transparent to show the gradient
+        elevation: 0, // Remove the shadow
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF1C1E33),
+                Color.fromARGB(255, 47, 49, 78),
+              ],
+            ),
+          ),
+        ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
@@ -95,8 +109,8 @@ class _SettingsState extends State<Settings> {
             Text('Speed: ${_speed.toStringAsFixed(2)}',
                 style: const TextStyle(fontSize: 16)),
             Slider(
-              thumbColor: const Color(0xFF2E0059),
-              activeColor: const Color(0xFF2E0059),
+              thumbColor: const Color.fromRGBO(28, 30, 51, 1),
+              activeColor: const Color.fromARGB(255, 47, 49, 78),
               value: _speed,
               min: 0.1,
               max: 3.0,
@@ -171,8 +185,23 @@ class _QRScanScreenState extends State<QRScanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2E0059),
+        backgroundColor: Colors
+            .transparent, // Make the background transparent to show the gradient
+        elevation: 0, // Remove the shadow
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF1C1E33),
+                Color.fromARGB(255, 47, 49, 78),
+              ],
+            ),
+          ),
+        ),
         title: const Text(
           'Scan QR Code',
           style: TextStyle(color: Colors.white),
