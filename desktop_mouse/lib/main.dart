@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart'; // For QR code generation
 import 'dart:io';
 import 'dart:convert';
+
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() {
   runApp(const MyApp());
@@ -40,25 +44,24 @@ class MyHomePage extends StatefulWidget {
 
 /// The state for [MyHomePage] that manages the Python server process and UI updates.
 class _MyHomePageState extends State<MyHomePage> {
-  // Status strings and logs.
   String _pythonStatus = "Not started";
   String _serverStatus = "Not running";
   String _phoneConnection = "Not connected";
-  final String _connectionPort = "5000"; // as per your Python server
+  final String _connectionPort = "5000";
   final List<String> _logs = [];
-  String _ipAddress = "Fetching IP..."; // IP address of the system
-  bool _showQrCode = false; // Toggle for showing/hiding QR code
-
+  String _ipAddress = "Fetching IP...";
+  bool _showQrCode = false;
   Process? _pythonProcess;
+  IO.Socket? _socket;
 
   @override
   void initState() {
     super.initState();
     _initPython();
-    _fetchIpAddress(); // Fetch IP address when the app starts
+    _fetchIpAddress();
+    _connectToSocket();
   }
 
-  /// Fetches the IP address of the system using a Python script.
   Future<void> _fetchIpAddress() async {
     try {
       final result =
@@ -79,13 +82,47 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  /// Initializes the Python environment and starts the Python server.
+  void _connectToSocket() {
+    _socket = IO.io('http://$_ipAddress:$_connectionPort', <String, dynamic>{
+      'transports': ['websocket'],
+    });
+
+    _socket?.on('mouse_move', (data) {
+      setState(() {
+        _logs.add("Mouse moved to: ${data['x']}, ${data['y']}");
+      });
+    });
+
+    _socket?.on('mouse_click', (data) {
+      setState(() {
+        _logs.add("Mouse clicked at: ${data['x']}, ${data['y']}");
+      });
+    });
+
+    _socket?.on('mouse_scroll', (data) {
+      setState(() {
+        _logs.add("Mouse scrolled at: ${data['x']}, ${data['y']}");
+      });
+    });
+
+    _socket?.onConnect((_) {
+      setState(() {
+        _phoneConnection = "Connected";
+      });
+    });
+
+    _socket?.onDisconnect((_) {
+      setState(() {
+        _phoneConnection = "Not connected";
+      });
+    });
+  }
+
   Future<void> _initPython() async {
-    final pythonCmd = 'python'; // Change to 'python3' if needed.
+    final pythonCmd = 'python';
     final pythonScript = 'server.py';
     final requiredPackages = ['python-socketio', 'aiohttp', 'pynput'];
 
-    // 1. Check that Python is installed.
     bool pythonAvailable = await _isCommandAvailable(pythonCmd, ['--version']);
     if (!pythonAvailable) {
       setState(() {
@@ -99,7 +136,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _logs.add("Python is available.");
     });
 
-    // 2. Check and install missing Python packages.
     for (final pkg in requiredPackages) {
       bool installed = await _checkPythonPackage(pythonCmd, pkg);
       if (!installed) {
@@ -124,7 +160,6 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
-    // 3. Start the Python script.
     setState(() {
       _logs.add("Starting Python script: $pythonScript");
     });
@@ -138,46 +173,6 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         _serverStatus = "Running";
       });
-
-      // Listen to stdout from the Python process.
-      _pythonProcess!.stdout
-          .transform(utf8.decoder)
-          .transform(const LineSplitter())
-          .listen((line) {
-        debugPrint("Python stdout: $line");
-        setState(() {
-          _logs.add("Python: $line");
-        });
-        final lowerLine = line.toLowerCase();
-        if (lowerLine.contains("client connected:")) {
-          final parts = line.split("Client connected:");
-          if (parts.length > 1) {
-            String clientId = parts[1].trim();
-            setState(() {
-              _phoneConnection = "Connected: $clientId";
-            });
-          } else {
-            setState(() {
-              _phoneConnection = "Connected";
-            });
-          }
-        } else if (lowerLine.contains("client disconnected:")) {
-          setState(() {
-            _phoneConnection = "Not connected";
-          });
-        }
-      });
-
-      // Listen to stderr from the Python process.
-      _pythonProcess!.stderr
-          .transform(utf8.decoder)
-          .transform(const LineSplitter())
-          .listen((line) {
-        debugPrint("Python stderr: $line");
-        setState(() {
-          _logs.add("Error: $line");
-        });
-      });
     } catch (e) {
       setState(() {
         _logs.add("Error: Failed to start Python process: $e");
@@ -186,7 +181,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  /// Checks if a command is available by running it with the provided arguments.
   Future<bool> _isCommandAvailable(String cmd, List<String> args) async {
     try {
       final result = await Process.run(cmd, args, runInShell: true);
@@ -196,7 +190,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  /// Checks if a given Python package is installed using `pip show <package>`.
   Future<bool> _checkPythonPackage(String pythonCmd, String package) async {
     try {
       final result = await Process.run(
@@ -210,7 +203,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  /// Installs a Python package using pip.
   Future<bool> _installPythonPackage(String pythonCmd, String package) async {
     try {
       final result = await Process.run(
@@ -224,10 +216,60 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void _stopPythonServer() async {
+    try {
+      if (_pythonProcess != null) {
+        // If on Windows, use taskkill to kill the python process by its name (python.exe)
+        final result = await Process.run(
+            'taskkill', ['/F', '/IM', 'python.exe'],
+            runInShell: true);
+        print("Taskkill result: ${result.stdout}");
+        setState(() {
+          _serverStatus = "Stopped";
+          _logs.add("Python server stopped.");
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _logs.add("Error stopping Python server: $e");
+      });
+    }
+
+    // Close WebSocket if it's still open
+    if (_socket != null) {
+      try {
+        if (_socket!.connected) {
+          await _socket!.close();
+          setState(() {
+            _logs.add("WebSocket connection closed.");
+          });
+        } else {
+          setState(() {
+            _logs.add("WebSocket was already closed.");
+          });
+        }
+      } catch (e) {
+        setState(() {
+          _logs.add("Error closing WebSocket: $e");
+        });
+      }
+    } else {
+      setState(() {
+        _logs.add("No WebSocket to close.");
+      });
+    }
+  }
+
+  void _restartPythonServer() async {
+    _initPython();
+    _fetchIpAddress();
+    _connectToSocket();
+  }
+
   @override
   void dispose() {
-    // Terminate the Python process when closing the app.
-    _pythonProcess?.kill();
+    _stopPythonServer();
+    _socket?.disconnect();
     super.dispose();
   }
 
@@ -250,6 +292,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 _showQrCode = !_showQrCode; // Toggle QR code visibility
               });
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.stop_circle_outlined), // Stop server button
+            onPressed: () {
+              _stopPythonServer();
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.restart_alt), // Restart server button
+            onPressed: _restartPythonServer,
           ),
         ],
       ),
