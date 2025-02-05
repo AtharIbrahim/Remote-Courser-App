@@ -5,14 +5,12 @@ void main() {
   runApp(const MyApp());
 }
 
-/// The root widget of the application.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Desktop Mouse Controller',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
