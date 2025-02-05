@@ -13,7 +13,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Initilize Vaiables:
+  // Vaiables:
   String _pythonStatus = "Not started";
   String _serverStatus = "Not running";
   String _phoneConnection = "Not connected";
@@ -250,6 +250,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      // Toolbar
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -266,6 +267,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         title: Text(widget.title),
+        // Toolbar Actions
         actions: [
           IconButton(
             icon:

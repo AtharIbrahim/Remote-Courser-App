@@ -9,15 +9,17 @@ class MouseControlScreen extends StatefulWidget {
 }
 
 class _MouseControlScreenState extends State<MouseControlScreen> {
+  // Vaiables:
   late IO.Socket socket;
-  double speedMultiplier = 1.0; // Default speed multiplier
-  String ipAddress = ''; // Store the IP address
+  double speedMultiplier = 1.0;
+  String ipAddress = '';
   String _connectionStatusMessage = "Connecting...";
 
+  // On Initial
   @override
   void initState() {
     super.initState();
-    _loadSettings(); // Load saved settings (speed and IP address)
+    _loadSettings();
   }
 
   // Load the saved settings (speed and IP address)
@@ -27,6 +29,7 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
       speedMultiplier = prefs.getDouble('mouse_speed') ?? 1.0;
       ipAddress = prefs.getString('pc_ip') ?? '192.168.100.13'; // Default IP
     });
+    // call the function to connect to the server
     connectToServer();
   }
 
@@ -42,19 +45,21 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
 
     socket.connect();
 
-    // Listen for connection events.
+    // On Connection
     socket.onConnect((_) {
       setState(() {
         _connectionStatusMessage = "Connected to server at $ipAddress";
       });
     });
 
+    // On Disconnection
     socket.onDisconnect((_) {
       setState(() {
         _connectionStatusMessage = "Disconnected from server";
       });
     });
 
+    // On Error
     socket.onConnectError((error) {
       setState(() {
         _connectionStatusMessage = "Connection error";
@@ -72,6 +77,7 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
     setState(() {
       speedMultiplier = speed;
     });
+    // Call the function to reload the speed
     _saveSettings();
   }
 
@@ -82,9 +88,11 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
     prefs.setString('pc_ip', ipAddress); // Save the IP address
   }
 
+  // Main UI Build
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Toolbar
       appBar: AppBar(
         title: const Text(
           'Cursor Control',
@@ -107,6 +115,7 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
             ),
           ),
         ),
+        // Toolbar Actions
         actions: [
           IconButton(
             icon: const Icon(
@@ -114,7 +123,6 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
               color: Colors.white,
             ),
             onPressed: () {
-              // Navigate to the settings screen and pass the callbacks.
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -134,6 +142,8 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
           ),
         ],
       ),
+
+      // Body
       body: Stack(
         children: [
           // Gesture Detector for mouse control events.
