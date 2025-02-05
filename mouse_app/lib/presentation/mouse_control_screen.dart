@@ -193,6 +193,7 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
     );
   }
 
+  // On Dispose
   @override
   void dispose() {
     socket.disconnect();
