@@ -22,7 +22,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        primarySwatch: Colors.deepPurple,
         textTheme: const TextTheme(
           titleLarge: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
           bodyMedium: TextStyle(fontSize: 16.0),
@@ -279,9 +278,22 @@ class _MyHomePageState extends State<MyHomePage> {
     // final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor:
-            const Color.from(alpha: 1, red: 0.051, green: 0.051, blue: 0.169),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF1C1E33),
+                Color(0xFF1C1E33),
+              ],
+            ),
+          ),
+        ),
         title: Text(widget.title),
         actions: [
           IconButton(
@@ -308,7 +320,10 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF2E0059), Color(0xFF0D0D2B)],
+            colors: [
+              Color(0xFF1C1E33),
+              Color.fromARGB(255, 47, 49, 78),
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
