@@ -26,7 +26,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Remove the backgroundColor property
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -42,6 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Logo
               const Spacer(flex: 4),
               Image.asset(
                 "assets/logo1.png",
@@ -49,6 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 width: 200,
               ),
               const SizedBox(height: 24),
+              // Circular Loader
               const Spacer(flex: 2),
               const CircularProgressIndicator(
                 strokeWidth: 4,
@@ -58,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 backgroundColor: Colors.white,
               ),
               const Spacer(flex: 1),
-              // Text
+              // Bottom Text
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
