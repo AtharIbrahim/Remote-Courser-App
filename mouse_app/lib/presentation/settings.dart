@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mouse_app/presentation/qr_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:permission_handler/permission_handler.dart'; // Add this
+import 'package:permission_handler/permission_handler.dart';
 
 class Settings extends StatefulWidget {
   final Function(double) onSpeedChanged;
@@ -18,10 +18,12 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  // Variables:
   double _speed = 1.0;
   String _ipAddress = '';
-  late TextEditingController _ipController; // Add controller
+  late TextEditingController _ipController;
 
+  // On Initial
   @override
   void initState() {
     super.initState();
@@ -29,21 +31,24 @@ class _SettingsState extends State<Settings> {
     _loadSettings();
   }
 
+  // Load the Save Settings
   _loadSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _speed = prefs.getDouble('mouse_speed') ?? 1.0;
       _ipAddress = prefs.getString('pc_ip') ?? '';
-      _ipController.text = _ipAddress; // Initialize controller text
+      _ipController.text = _ipAddress;
     });
   }
 
+  // Function To Save The App Settings!
   _saveSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setDouble('mouse_speed', _speed);
     prefs.setString('pc_ip', _ipAddress);
   }
 
+  // Pass the changes to the py server
   void _sendToServer() {
     widget.onSpeedChanged(_speed);
     widget.onIpChanged(_ipAddress);
@@ -70,23 +75,26 @@ class _SettingsState extends State<Settings> {
           });
           _saveSettings();
           _sendToServer();
-        } catch (e) {}
+        } catch (e) {
+          // Handle Errors
+        }
       }
     } else {}
   }
 
+  // Main UI Build
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      // Toolbar
       appBar: AppBar(
         title: const Text(
           'Settings',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors
-            .transparent, // Make the background transparent to show the gradient
-        elevation: 0, // Remove the shadow
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -101,6 +109,7 @@ class _SettingsState extends State<Settings> {
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
+      // Body
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -114,6 +123,7 @@ class _SettingsState extends State<Settings> {
               value: _speed,
               min: 0.1,
               max: 3.0,
+              // Call Functions
               onChanged: (newSpeed) {
                 setState(() {
                   _speed = newSpeed;
@@ -130,6 +140,7 @@ class _SettingsState extends State<Settings> {
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(8.0),
               ),
+              // Ip Input Field
               child: Row(
                 children: [
                   Expanded(
@@ -161,63 +172,6 @@ class _SettingsState extends State<Settings> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// Add QR scanning screen
-class QRScanScreen extends StatefulWidget {
-  @override
-  State<QRScanScreen> createState() => _QRScanScreenState();
-}
-
-class _QRScanScreenState extends State<QRScanScreen> {
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  MobileScannerController cameraController = MobileScannerController();
-
-  @override
-  void dispose() {
-    cameraController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors
-            .transparent, // Make the background transparent to show the gradient
-        elevation: 0, // Remove the shadow
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF1C1E33),
-                Color.fromARGB(255, 47, 49, 78),
-              ],
-            ),
-          ),
-        ),
-        title: const Text(
-          'Scan QR Code',
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: MobileScanner(
-        controller: cameraController,
-        onDetect: (capture) {
-          final List<Barcode> barcodes = capture.barcodes;
-          for (final barcode in barcodes) {
-            if (barcode.rawValue != null) {
-              Navigator.pop(context, barcode.rawValue);
-            }
-          }
-        },
       ),
     );
   }
