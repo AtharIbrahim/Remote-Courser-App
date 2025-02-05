@@ -9,19 +9,19 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // @override
-  // void initState() {
-  //   super.initState();
+  @override
+  void initState() {
+    super.initState();
 
-  //   Future.delayed(const Duration(seconds: 3), () {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => MyHomePage(title: "Desktop Mouse Controller"),
-  //       ),
-  //     );
-  //   });
-  // }
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(title: "Desktop Mouse Controller"),
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +53,9 @@ class _SplashScreenState extends State<SplashScreen> {
               const CircularProgressIndicator(
                 strokeWidth: 4,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  Color(0xFF1C1E33),
+                  Color.fromARGB(255, 255, 255, 255),
                 ),
-                backgroundColor: Colors.white,
+                // backgroundColor: Colors.white,
               ),
               const Spacer(flex: 1),
               // Text
