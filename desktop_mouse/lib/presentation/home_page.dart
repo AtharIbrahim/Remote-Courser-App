@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:desktop_mouse/concepts/fetch_ip_add.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -34,23 +35,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Fetch Ip Address
   Future<void> _fetchIpAddress() async {
-    try {
-      final result =
-          await Process.run('python', ['get_ip.py'], runInShell: true);
-      if (result.exitCode == 0) {
-        setState(() {
-          _ipAddress = result.stdout.toString().trim();
-        });
-      } else {
-        setState(() {
-          _ipAddress = "Failed to fetch IP";
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _ipAddress = "Error: $e";
-      });
-    }
+    String ipAddress = await FetchIpAddress.getIp();
+    setState(() {
+      _ipAddress = ipAddress;
+    });
   }
 
   // Connect To Socket
@@ -427,6 +415,7 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Card Title
               Text(
                 title,
                 style: const TextStyle(
@@ -435,6 +424,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               const Spacer(),
+              // Card Status
               Text(
                 value,
                 style: TextStyle(
