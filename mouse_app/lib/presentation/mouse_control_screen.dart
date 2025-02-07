@@ -160,7 +160,7 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
               sendEvent('RIGHT_CLICK', null);
             },
             child: Container(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.background,
               child: Center(
                   //
                   ),
