@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mouse_app/presentation/qr_scanner.dart';
+import 'package:mouse_app/theme/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -166,6 +169,32 @@ class _SettingsState extends State<Settings> {
                     icon: const Icon(Icons.qr_code_scanner),
                     onPressed: _scanQRCode,
                     color: const Color(0xFF2E0059),
+                  ),
+                ],
+              ),
+            ),
+
+            // Switch Modes
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: const EdgeInsets.all(25),
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // dark Mode
+                  const Text("Dark Mode"),
+
+                  // Switch Toggle
+                  CupertinoSwitch(
+                    value: Provider.of<ThemeProvider>(context, listen: false)
+                        .isDarkMode,
+                    onChanged: (value) =>
+                        Provider.of<ThemeProvider>(context, listen: false)
+                            .toggleTheme(),
                   ),
                 ],
               ),
