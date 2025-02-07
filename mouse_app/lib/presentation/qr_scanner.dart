@@ -21,7 +21,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
       // Toolbar
       appBar: AppBar(
         backgroundColor: Colors.transparent,

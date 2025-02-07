@@ -140,8 +140,8 @@ class _SettingsState extends State<Settings> {
               padding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8.0),
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(10),
               ),
               // Ip Input Field
               child: Row(
@@ -174,14 +174,16 @@ class _SettingsState extends State<Settings> {
               ),
             ),
 
+            const SizedBox(height: 20),
+
             // Switch Modes
             Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.secondary,
                 borderRadius: BorderRadius.circular(10),
               ),
-              margin: const EdgeInsets.all(25),
-              padding: const EdgeInsets.all(16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
