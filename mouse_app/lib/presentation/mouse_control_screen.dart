@@ -18,16 +18,6 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
   String _connectionStatusMessage = "Connecting...";
 
   // RGB Variables
-  late Timer _timer;
-  List<Color> _rgbColors = [
-    Colors.red,
-    Colors.blue,
-    Colors.green,
-    Colors.purple,
-    Colors.orange,
-    Colors.cyan,
-  ];
-  int _currentColorIndex = 0;
 
   // On Initial
   @override
