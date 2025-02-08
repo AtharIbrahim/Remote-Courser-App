@@ -25,12 +25,14 @@ class _SettingsState extends State<Settings> {
   double _speed = 1.0;
   String _ipAddress = '';
   late TextEditingController _ipController;
+  bool _isRgbOn = true; // Default value
 
   // On Initial
   @override
   void initState() {
     super.initState();
     _ipController = TextEditingController();
+
     _loadSettings();
   }
 
@@ -41,6 +43,7 @@ class _SettingsState extends State<Settings> {
       _speed = prefs.getDouble('mouse_speed') ?? 1.0;
       _ipAddress = prefs.getString('pc_ip') ?? '';
       _ipController.text = _ipAddress;
+      _isRgbOn = prefs.getBool('rgb_effect') ?? true; // Load RGB state
     });
   }
 
@@ -49,6 +52,7 @@ class _SettingsState extends State<Settings> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setDouble('mouse_speed', _speed);
     prefs.setString('pc_ip', _ipAddress);
+    prefs.setBool('rgb_effect', _isRgbOn); // Save RGB state
   }
 
   // Pass the changes to the py server
@@ -177,7 +181,7 @@ class _SettingsState extends State<Settings> {
 
             const SizedBox(height: 20),
 
-            // Switch Modes
+            // Switch Dark/Light Modes
             Container(
               padding:
                   const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
@@ -198,6 +202,36 @@ class _SettingsState extends State<Settings> {
                     onChanged: (value) =>
                         Provider.of<ThemeProvider>(context, listen: false)
                             .toggleTheme(),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // On/OFF BG Modes
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // dark Mode
+                  const Text("Edge RGB"),
+
+                  // Switch Toggle
+                  CupertinoSwitch(
+                    value: _isRgbOn,
+                    onChanged: (value) {
+                      setState(() {
+                        _isRgbOn = value;
+                      });
+                      _saveSettings(); // Save the new state
+                    },
                   ),
                 ],
               ),

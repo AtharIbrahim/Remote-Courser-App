@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:mouse_app/background_effects/simple_rgb.dart';
 import 'package:mouse_app/presentation/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -19,11 +20,18 @@ class _MouseControlScreenState extends State<MouseControlScreen>
   String ipAddress = '';
   String _connectionStatusMessage = "Connecting...";
 
+  // RGB Variables
+  late AnimationController _animationController;
+
   // On Initial
   @override
   void initState() {
     super.initState();
     _loadSettings();
+    _animationController = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    )..repeat(reverse: true);
   }
 
   // Load the saved settings (speed and IP address)
@@ -150,6 +158,12 @@ class _MouseControlScreenState extends State<MouseControlScreen>
       // Body
       body: Stack(
         children: [
+          // Neon RGB Edge Effect
+          Positioned.fill(
+            child: SimpleRgb(
+              animationController: _animationController,
+            ),
+          ),
           // Gesture Detector for mouse control events.
           GestureDetector(
             onPanUpdate: (details) {
