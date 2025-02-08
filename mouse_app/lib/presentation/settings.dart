@@ -282,8 +282,8 @@ class _SettingsState extends State<Settings> {
                         const Text(
                           "BG Theme",
                           style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
+                            // color: Colors.white,
+                            fontWeight: FontWeight.w700,
                             fontSize: 16,
                           ),
                         ),
