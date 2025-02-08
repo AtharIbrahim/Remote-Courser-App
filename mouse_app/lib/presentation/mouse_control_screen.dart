@@ -184,6 +184,7 @@ class _MouseControlScreenState extends State<MouseControlScreen>
               padding: const EdgeInsets.fromLTRB(8, 46, 8, 8),
               child: Container(
                 color: Theme.of(context).colorScheme.background,
+
                 // color: Colors.transparent,
                 child: Center(
                     //
