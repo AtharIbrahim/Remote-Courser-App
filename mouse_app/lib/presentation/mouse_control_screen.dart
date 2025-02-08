@@ -10,7 +10,8 @@ class MouseControlScreen extends StatefulWidget {
   _MouseControlScreenState createState() => _MouseControlScreenState();
 }
 
-class _MouseControlScreenState extends State<MouseControlScreen> {
+class _MouseControlScreenState extends State<MouseControlScreen>
+    with TickerProviderStateMixin {
   // Vaiables:
   late IO.Socket socket;
   double speedMultiplier = 1.0;
@@ -18,12 +19,18 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
   String _connectionStatusMessage = "Connecting...";
 
   // RGB Variables
+  late AnimationController _animationController;
 
   // On Initial
   @override
   void initState() {
     super.initState();
     _loadSettings();
+    // Initialize Animation Controller
+    _animationController = AnimationController(
+      duration: const Duration(seconds: 5),
+      vsync: this,
+    )..repeat(); // Ensure it loops continuously
   }
 
   // Load the saved settings (speed and IP address)
@@ -150,6 +157,34 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
       // Body
       body: Stack(
         children: [
+          // RGB Edge Effect
+          Positioned.fill(
+            child: AnimatedBuilder(
+              animation: _animationController,
+              builder: (context, child) {
+                return ShaderMask(
+                  shaderCallback: (rect) {
+                    return LinearGradient(
+                      colors: [Colors.red, Colors.green, Colors.blue],
+                      stops: [
+                        (_animationController.value - 0.2).clamp(0.0, 1.0),
+                        (_animationController.value).clamp(0.0, 1.0),
+                        (_animationController.value + 0.2).clamp(0.0, 1.0),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      tileMode: TileMode.mirror,
+                    ).createShader(rect);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.transparent, width: 8),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
           // Gesture Detector for mouse control events.
           GestureDetector(
             onPanUpdate: (details) {
@@ -164,7 +199,8 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
               sendEvent('RIGHT_CLICK', null);
             },
             child: Container(
-              color: Theme.of(context).colorScheme.background,
+              // color: Theme.of(context).colorScheme.background,
+              color: Colors.transparent,
               child: Center(
                   //
                   ),
@@ -201,6 +237,7 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
   @override
   void dispose() {
     socket.disconnect();
+    _animationController.dispose();
     super.dispose();
   }
 }
