@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mouse_app/presentation/mouse_control_screen.dart';
 import 'package:mouse_app/presentation/qr_scanner.dart';
 import 'package:mouse_app/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -115,6 +116,22 @@ class _SettingsState extends State<Settings> {
           ),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
+        // Toolbar Back Arrow
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            // Custom navigation logic here
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MouseControlScreen(),
+              ),
+            );
+          },
+        ),
       ),
       // Body
       body: Padding(

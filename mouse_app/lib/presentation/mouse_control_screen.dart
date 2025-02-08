@@ -131,16 +131,7 @@ class _MouseControlScreenState extends State<MouseControlScreen>
             ),
           ),
         ),
-        // Toolbar Back Arrow
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            // Custom navigation logic here
-          },
-        ),
+        automaticallyImplyLeading: false,
         // Toolbar Actions
         actions: [
           IconButton(
