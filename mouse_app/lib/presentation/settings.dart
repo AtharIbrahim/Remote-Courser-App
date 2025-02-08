@@ -230,7 +230,7 @@ class _SettingsState extends State<Settings> {
                       setState(() {
                         _isRgbOn = value;
                       });
-                      _saveSettings(); // Save the new state
+                      _saveSettings();
                     },
                   ),
                 ],

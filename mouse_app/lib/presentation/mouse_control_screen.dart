@@ -22,6 +22,7 @@ class _MouseControlScreenState extends State<MouseControlScreen>
 
   // RGB Variables
   late AnimationController _animationController;
+  bool _isRgbOn = false;
 
   // On Initial
   @override
@@ -40,6 +41,8 @@ class _MouseControlScreenState extends State<MouseControlScreen>
     setState(() {
       speedMultiplier = prefs.getDouble('mouse_speed') ?? 1.0;
       ipAddress = prefs.getString('pc_ip') ?? '192.168.100.13'; // Default IP
+      _isRgbOn =
+          prefs.getBool('rgb_effect') ?? true; // Default RGB effect is ON
     });
     // call the function to connect to the server
     connectToServer();
@@ -98,6 +101,7 @@ class _MouseControlScreenState extends State<MouseControlScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setDouble('mouse_speed', speedMultiplier);
     prefs.setString('pc_ip', ipAddress); // Save the IP address
+    prefs.setBool('rgb_effect', _isRgbOn); // Save the IP address
   }
 
   // Main UI Build
@@ -126,6 +130,16 @@ class _MouseControlScreenState extends State<MouseControlScreen>
               ],
             ),
           ),
+        ),
+        // Toolbar Back Arrow
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            // Custom navigation logic here
+          },
         ),
         // Toolbar Actions
         actions: [
@@ -162,6 +176,7 @@ class _MouseControlScreenState extends State<MouseControlScreen>
           Positioned.fill(
             child: SimpleRgb(
               animationController: _animationController,
+              isEnabled: _isRgbOn,
             ),
           ),
           // Gesture Detector for mouse control events.
