@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:mouse_app/background_effects/simple_rgb.dart';
 import 'package:mouse_app/presentation/settings.dart';
