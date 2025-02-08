@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mouse_app/presentation/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +16,18 @@ class _MouseControlScreenState extends State<MouseControlScreen> {
   double speedMultiplier = 1.0;
   String ipAddress = '';
   String _connectionStatusMessage = "Connecting...";
+
+  // RGB Variables
+  late Timer _timer;
+  List<Color> _rgbColors = [
+    Colors.red,
+    Colors.blue,
+    Colors.green,
+    Colors.purple,
+    Colors.orange,
+    Colors.cyan,
+  ];
+  int _currentColorIndex = 0;
 
   // On Initial
   @override
