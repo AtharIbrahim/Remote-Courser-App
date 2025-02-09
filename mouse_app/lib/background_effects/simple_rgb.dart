@@ -67,6 +67,6 @@ class SimpleRgb extends StatelessWidget {
               );
             },
           )
-        : Container(); // Return an empty container if disabled
+        : Container();
   }
 }
