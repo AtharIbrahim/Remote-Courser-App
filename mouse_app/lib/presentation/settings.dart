@@ -257,41 +257,41 @@ class _SettingsState extends State<Settings> {
             const SizedBox(height: 20),
 
             // Theme Selection
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary,
-                // color: Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                  image: AssetImage(
-                    'assets/bg1.jpg',
-                  ), // Path to your image
-                  fit: BoxFit
-                      .cover, // Adjusts how the image fits inside the container
-                  opacity: 0.6,
-                ),
-              ),
-              child: Stack(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Theme Text
-                      const Text(
-                        "BG Theme",
-                        style: TextStyle(
-                          // color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            // Container(
+            //   padding:
+            //       const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+            //   decoration: BoxDecoration(
+            //     color: Theme.of(context).colorScheme.secondary,
+            //     // color: Colors.transparent,
+            //     borderRadius: BorderRadius.circular(10),
+            //     image: DecorationImage(
+            //       image: AssetImage(
+            //         'assets/bg1.jpg',
+            //       ), // Path to your image
+            //       fit: BoxFit
+            //           .cover, // Adjusts how the image fits inside the container
+            //       opacity: 0.6,
+            //     ),
+            //   ),
+            //   child: Stack(
+            //     children: [
+            //       Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: [
+            //           // Theme Text
+            //           const Text(
+            //             "BG Theme",
+            //             style: TextStyle(
+            //               // color: Colors.white,
+            //               fontWeight: FontWeight.w700,
+            //               fontSize: 16,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
