@@ -18,6 +18,15 @@ The desktop version after installation just open app, then app doing following t
 
 ---
 
+## 📸 Screenshots
+
+| ![Icon](Screenshots/screenshot1.png) |
+|:---:|
+| ![Icon](Screenshots/Screenshot2.png) |
+|:---:|
+
+---
+
 ## 🚀 Features
 
 - 🌟 **Python Server for Communication: **: The app utilizes a Python-based server to handle seamless data exchange between the desktop and mobile devices.
